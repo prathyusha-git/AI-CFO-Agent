@@ -1,0 +1,19 @@
+date,description,amount,category,type
+2026-01-03,Square Payout,5200,Sales,income
+2026-01-05,Sysco Foods,-1400,COGS,expense
+2026-01-10,Rent,-2200,Rent,expense
+2026-01-12,Payroll,-4800,Payroll,expense
+2026-01-15,DoorDash Payout,2100,Sales,income
+2026-01-18,Utilities,-420,Utilities,expense
+2026-01-22,Marketing Ads,-650,Marketing,expense
+2026-02-02,Square Payout,6100,Sales,income
+2026-02-06,Sysco Foods,-1700,COGS,expense
+2026-02-10,Rent,-2200,Rent,expense
+2026-02-12,Payroll,-4900,Payroll,expense
+2026-02-16,DoorDash Payout,1900,Sales,income
+2026-02-18,Utilities,-410,Utilities,expense
+2026-02-20,Refunds,-380,Refunds,expense
+2026-03-01,Square Payout,3000,Sales,income
+2026-03-03,Sysco Foods,-1600,COGS,expense
+2026-03-05,Rent,-2200,Rent,expense
+2026-03-08,Payroll,-5000,Payroll,expense

@@ -1,3 +1,10 @@
+# CashFlow CFO Agent
+
+![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-backend-green)
+![OpenAI](https://img.shields.io/badge/OpenAI-LLM-orange)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+![Status](https://img.shields.io/badge/status-prototype-success)
 # AI-CFO-Agent
 CashFlowGPT — An AI CFO Agent for SMBs....... This will 
 1) Connect to mock QuickBooks data  
@@ -9,7 +16,40 @@ CashFlowGPT — An AI CFO Agent for SMBs....... This will
 7)Expose a FastAPI endpoint  
 8)Show real reasoning workflow
 
+## Demo
 
+This backend provides financial monitoring and AI advisory capabilities.
+
+Key endpoints demonstrated:
+
+- `/dashboard` → Business health overview
+- `/alerts` → Financial risk monitoring
+- `/ask_forecast` → AI CFO recommendations
+
+Example financial alerts detected by the system:
+
+- Revenue dropped 62.5% month-over-month
+- Latest month net cashflow is negative
+- Estimated runway ~2.3 months
+- Next month forecast is negative
+  
+AI-CFO-Agent
+│
+├── app
+│ ├── main.py # FastAPI server
+│ ├── agent.py # AI CFO reasoning layer
+│ ├── tools.py # Financial analytics engine
+│ ├── memory.py # Conversation memory
+│
+├── data
+│ └── sample_transactions.csv
+│
+├── requirements.txt
+└── README.md
+
+## Demo Video
+
+Loom walkthrough:
 # CashFlow CFO Agent
 
 An AI-powered financial monitoring and advisory backend built with **FastAPI, Python, and OpenAI**.  

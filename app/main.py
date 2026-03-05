@@ -1,13 +1,18 @@
-import os
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
 
-from app.schemas import AskRequest, AskResponse
-from app.agent import answer_question
+from app.schemas import (
+    AskRequest,
+    AskResponse,
+    AskForecastRequest,
+    AskForecastResponse,
+)
+from app.agent import answer_question, answer_forecast_question
+from app.tools import load_transactions, cashflow_summary, forecast_summary
 
 load_dotenv()
 
-app = FastAPI(title="CashFlow CFO Agent", version="0.1.0")
+app = FastAPI(title="CashFlow CFO Agent", version="0.3.0")
 
 
 @app.get("/health")
@@ -15,10 +20,33 @@ def health():
     return {"status": "ok"}
 
 
+# Deterministic: no GPT
+@app.get("/summary")
+def summary():
+    df = load_transactions()
+    return cashflow_summary(df)
+
+
+# Deterministic: no GPT
+@app.get("/forecast")
+def forecast():
+    df = load_transactions()
+    return forecast_summary(df)
+
+
+# GPT + Memory over cashflow_summary
 @app.post("/ask", response_model=AskResponse)
 def ask(req: AskRequest):
     try:
-        result = answer_question(req.question)
-        return result
+        return answer_question(req.business_id, req.question)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# GPT + Memory over forecast_summary
+@app.post("/ask_forecast", response_model=AskForecastResponse)
+def ask_forecast(req: AskForecastRequest):
+    try:
+        return answer_forecast_question(req.business_id, req.question)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

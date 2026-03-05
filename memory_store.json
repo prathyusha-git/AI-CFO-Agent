@@ -1,0 +1,16 @@
+{
+  "demo": [
+    {
+      "ts": "2026-03-05T05:31:33.875434Z",
+      "kind": "forecast",
+      "question": "Given this forecast, what should I do this week?",
+      "answer": "1) The business is facing a high-risk situation with a sharp decline in revenue and increasing expenses, leading to a negative cash flow and a limited runway of 2.28 months.\n\n2) \n- Immediately implement cost-cutting measures to reduce expenses by at least 10% this week.\n- Launch a targeted marketing campaign to boost sales and try to reverse the revenue decline.\n- Negotiate with suppliers or creditors to extend payment terms to improve short-term cash flow.\n\n3) Watch the daily cash balance closely to ensure it does not fall below critical levels."
+    },
+    {
+      "ts": "2026-03-05T05:33:44.694626Z",
+      "kind": "forecast",
+      "question": "Based on what you recommended earlier, what is the most urgent action?",
+      "answer": "1) The most urgent action is to address the high-risk situation caused by a sharp decline in revenue and increasing expenses, resulting in a negative cash flow.\n\n2) \n- Implement cost-cutting measures immediately to reduce expenses by at least 10% within the week.\n- Launch a targeted marketing campaign to boost sales and counteract the revenue decline.\n- Negotiate with suppliers or creditors to extend payment terms to improve short-term cash flow.\n\n3) Watch the daily cash balance closely to ensure it does not fall below critical levels."
+    }
+  ]
+}

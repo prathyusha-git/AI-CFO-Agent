@@ -38,7 +38,7 @@ import os
 from openai import OpenAI
 
 from app.tools import load_transactions, cashflow_summary, forecast_summary
-from app.memory import add_memory, retrieve_memory
+from app.memory_local import add_memory, retrieve_memory
 
 
 CASHFLOW_SYSTEM_PROMPT = """
@@ -90,7 +90,7 @@ def answer_question(business_id: str, question: str) -> dict:
     summary = cashflow_summary(df)
 
     # memory retrieval
-    memories = retrieve_memory(business_id=business_id, query=question, k=5)
+    memories = retrieve_memory(business_id=business_id, k=5)
 
     resp = client.chat.completions.create(
         model=model,
@@ -126,7 +126,7 @@ def answer_forecast_question(business_id: str, question: str) -> dict:
     f_summary = forecast_summary(df)
 
     # memory retrieval
-    memories = retrieve_memory(business_id=business_id, query=question, k=5)
+    memories = retrieve_memory(business_id=business_id, k=5)
 
     resp = client.chat.completions.create(
         model=model,

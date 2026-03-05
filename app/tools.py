@@ -182,3 +182,131 @@ def forecast_summary(df: pd.DataFrame) -> dict:
         "risk_level": risk,
         "risk_reasons": reasons,
     }
+
+def dashboard_summary(df):
+    """
+    Produces a business health dashboard from transactions.
+    """
+
+    cash = cashflow_summary(df)
+    forecast = forecast_summary(df)
+
+    latest_net = cash["latest_net"]
+    runway = cash.get("estimated_runway_months")
+
+    # Determine risk level
+    if runway is None:
+        risk = "unknown"
+    elif runway < 1:
+        risk = "critical"
+    elif runway < 3:
+        risk = "high"
+    elif runway < 6:
+        risk = "medium"
+    else:
+        risk = "low"
+
+    # Basic recommendations
+    actions = []
+
+    if latest_net < 0:
+        actions.append("Reduce discretionary expenses immediately")
+
+    if runway and runway < 3:
+        actions.append("Secure short-term financing or increase revenue")
+
+    if forecast.get("next_month_projection", 0) < 0:
+        actions.append("Improve receivables collection")
+
+    if not actions:
+        actions.append("Maintain current financial discipline")
+
+    return {
+        "cashflow_summary": cash,
+        "forecast_summary": forecast,
+        "risk_level": risk,
+        "estimated_runway_months": runway,
+        "recommended_actions": actions,
+    }
+
+
+def alerts_summary(df) -> dict:
+    """
+    Generate human-readable financial alerts based on cashflow + forecast signals.
+    Deterministic (no LLM), so it’s stable for demos and production monitoring.
+    """
+
+    cash = cashflow_summary(df)
+    fc = forecast_summary(df)
+
+    alerts = []
+
+    # ---- Pull key numbers safely ----
+    latest_month = cash.get("latest_month")
+    prev_month = cash.get("prev_month")
+    latest_net = cash.get("latest_net")
+    runway = cash.get("estimated_runway_months")
+
+    latest_income = cash.get("monthly_income", {}).get(latest_month)
+    prev_income = cash.get("monthly_income", {}).get(prev_month)
+
+    latest_expense = cash.get("monthly_expense", {}).get(latest_month)  # negative
+    prev_expense = cash.get("monthly_expense", {}).get(prev_month)      # negative
+
+    # forecast dict in your output uses "forecast_next_month"
+    next_fc = fc.get("forecast_next_month", {})
+    next_net = next_fc.get("net")
+
+    # ---- Revenue crash (MoM) ----
+    if latest_income is not None and prev_income is not None and prev_income != 0:
+        rev_drop_pct = ((latest_income - prev_income) / prev_income) * 100
+        if rev_drop_pct <= -25:
+            alerts.append(f"Revenue dropped {abs(rev_drop_pct):.1f}% month-over-month ({prev_month} → {latest_month}).")
+
+    # ---- Expense spike (MoM) ----
+    # Expenses are negative numbers; compare absolute magnitudes
+    if latest_expense is not None and prev_expense is not None and prev_expense != 0:
+        latest_abs = abs(latest_expense)
+        prev_abs = abs(prev_expense)
+        exp_increase_pct = ((latest_abs - prev_abs) / prev_abs) * 100
+        if exp_increase_pct >= 15:
+            alerts.append(f"Expenses increased {exp_increase_pct:.1f}% month-over-month ({prev_month} → {latest_month}).")
+
+    # ---- Cashflow negative ----
+    if latest_net is not None and latest_net < 0:
+        alerts.append(f"Latest month net cashflow is negative ({latest_net:.0f}).")
+
+    # ---- Runway risk ----
+    if runway is not None:
+        if runway < 1:
+            alerts.append(f"Runway is critical: ~{runway:.2f} months remaining.")
+        elif runway < 3:
+            alerts.append(f"Runway is high risk: ~{runway:.2f} months remaining.")
+
+    # ---- Forecast risk ----
+    if next_net is not None and next_net < 0:
+        alerts.append(f"Next month forecast is negative (projected net {next_net:.0f}).")
+
+    # ---- Risk level ----
+    # Simple deterministic level based on alerts / runway
+    if runway is not None and runway < 1:
+        risk_level = "critical"
+    elif runway is not None and runway < 3:
+        risk_level = "high"
+    elif any("Revenue dropped" in a for a in alerts) or any("Expenses increased" in a for a in alerts):
+        risk_level = "medium"
+    elif alerts:
+        risk_level = "low"
+    else:
+        risk_level = "ok"
+
+    return {
+        "risk_level": risk_level,
+        "latest_month": latest_month,
+        "alerts": alerts,
+        "signals": {
+            "estimated_runway_months": runway,
+            "latest_net": latest_net,
+            "forecast_next_month_net": next_net,
+        },
+    }
